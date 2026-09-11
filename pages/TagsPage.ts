@@ -59,6 +59,7 @@ this.firstTagName = page.locator(
 
     async navigateToTagsPage() {
         await this.page.goto('/settings/tags');
+         await this.page.waitForTimeout(3000);
     }
 
     async clickCreateTag() {
@@ -70,7 +71,30 @@ this.firstTagName = page.locator(
     async searchTag(tagName: string) {
         await this.searchInput.fill(tagName);
     }
+async restoreTagByName(tagName: string) {
+    const row = this.page
+        .locator('tbody tr')
+        .filter({ hasText: tagName });
 
+    await row
+        .getByRole('button', {
+            name: `Restore ${tagName}`
+        })
+        .click();
+}
+async editTagByName(tagName: string) {
+    const row = this.page
+        .locator('tbody tr')
+        .filter({
+            hasText: tagName
+        });
+
+    await row
+        .getByRole('button', {
+            name: new RegExp(`Edit ${tagName}`, 'i')
+        })
+        .click();
+}
     async createTag(name: string, description: string) {
         await this.tagNameInput.fill(name);
         await this.tagDescriptionInput.fill(description);

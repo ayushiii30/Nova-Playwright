@@ -6,6 +6,7 @@ dotenv.config();
 export default defineConfig({
 
     testDir: './tests',
+       workers: process.env.CI ? 2 : undefined,
 
     use: {
         baseURL: process.env.BASE_URL,

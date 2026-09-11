@@ -223,7 +223,7 @@ this.customIfCantAnswerButton = this.modal
     async navigateToChatbotProfile() {
         await this.page.goto('/ai');
         await this.page.waitForLoadState('domcontentloaded');
-
+ await this.page.waitForTimeout(3000);
         await expect(
             this.page.getByRole('button', {
                 name: /Create Profile/i

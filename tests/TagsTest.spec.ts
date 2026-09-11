@@ -1,4 +1,5 @@
 import { test, expect } from '../fixtures/test.fixture';
+import { generateUniqueTagName } from '../utils/testData';
 test.describe('Tags Management', () => {
 
     test('TC_001: User should be able to open Tags page', async ({tagsPage }) => {
@@ -6,24 +7,31 @@ test.describe('Tags Management', () => {
         await expect(tagsPage.createTagButton).toBeVisible();
         await expect(tagsPage.searchInput).toBeVisible();
     });
-    test('TC_002: User should be able to create Tag', async ({tagsPage }) => {
-        await tagsPage.navigateToTagsPage();
-        await tagsPage.clickCreateTag();
-        await expect(tagsPage.tagNameInput).toBeVisible();
-        await tagsPage.createTag(
-            'Automation Tag',
-            'Created for test'
-        );
-         await expect(
+    test('TC_002: User should be able to create Tag', async ({ tagsPage }) => {
+    await tagsPage.navigateToTagsPage();
+    await tagsPage.clickCreateTag();
+
+    await expect(tagsPage.tagNameInput).toBeVisible();
+
+    const tagName = generateUniqueTagName();
+
+    await tagsPage.createTag(
+        tagName,
+        'Created for test'
+    );
+
+    await expect(
         tagsPage.page.getByText(/Tag Created/i)
     ).toBeVisible();
-    });
-    test('TC_003: User should be able to search Tag by name', async ({
-    tagsPage}) => {
+});
+  test('TC_003: User should be able to search Tag by name', async ({
+    tagsPage
+}) => {
     await tagsPage.navigateToTagsPage();
-    await tagsPage.searchTag('Automation Tag');
+    const tagName = await tagsPage.getFirstTagName();
+    await tagsPage.searchTag(tagName);
     await expect(
-        tagsPage.page.getByText('Automation Tag')
+        tagsPage.page.getByText(tagName, { exact: true })
     ).toBeVisible();
 });
 
@@ -69,11 +77,27 @@ test('TC_008: User should not be able to create duplicate Tag', async ({
     tagsPage
 }) => {
     await tagsPage.navigateToTagsPage();
+
+    const tagName = generateUniqueTagName();
+
+    // Create first tag
     await tagsPage.clickCreateTag();
-    await tagsPage.tagNameInput.fill('Automation Tag');
-    await tagsPage.tagDescriptionInput.fill('Duplicate tag test');
-    await expect(tagsPage.modalCreateTagButton).toBeEnabled();
+
+    await tagsPage.tagNameInput.fill(tagName);
+    await tagsPage.tagDescriptionInput.fill('Original tag');
+
     await tagsPage.modalCreateTagButton.click();
+
+    await expect(
+        tagsPage.page.getByText(/Tag Created/i)
+    ).toBeVisible();
+    await tagsPage.clickCreateTag();
+
+    await tagsPage.tagNameInput.fill(tagName);
+    await tagsPage.tagDescriptionInput.fill('Duplicate tag test');
+
+    await tagsPage.modalCreateTagButton.click();
+
     await expect(
         tagsPage.page.getByText(/already exist/i)
     ).toBeVisible();
@@ -89,15 +113,33 @@ test('TC_009: User should be able to edit Tag', async ({tagsPage}) => {
     ).toBeVisible();
 
 });
-test('TC_010: User should be able to cancel editing a Tag', async ({ tagsPage }) => {
-
+test('TC_010: User should be able to cancel editing a Tag', async ({
+    tagsPage
+}) => {
     await tagsPage.navigateToTagsPage();
-    await tagsPage.editTagIcon.click();
-    await expect(tagsPage.tagNameInput).toBeVisible();
-    await tagsPage.tagNameInput.fill('Temporary Updated Tag');
-    await tagsPage.cancelButton.click();
-    await expect(tagsPage.tagNameInput).not.toBeVisible();
 
+    const tagName = generateUniqueTagName();
+
+    await tagsPage.clickCreateTag();
+
+    await tagsPage.createTag(
+        tagName,
+        'Tag for edit cancellation'
+    );
+
+    await expect(
+        tagsPage.page.getByText(/Tag Created/i)
+    ).toBeVisible();
+
+    await tagsPage.editTagByName(tagName);
+
+    await expect(tagsPage.tagNameInput).toBeVisible();
+
+    await tagsPage.tagNameInput.fill('Temporary Updated Tag');
+
+    await tagsPage.cancelButton.click();
+
+    await expect(tagsPage.tagNameInput).not.toBeVisible();
 });
 test('TC_011: User should be able to archive Tag', async ({ tagsPage }) => {
 
@@ -113,13 +155,17 @@ test('TC_011: User should be able to archive Tag', async ({ tagsPage }) => {
         tagsPage.page.getByText(archivedTagName)
     ).toBeVisible();
 });
-test('TC_013: User should be able to restore archived Tag', async ({ tagsPage }) => {
-
+test('TC_013: User should be able to restore archived Tag', async ({
+    tagsPage
+}) => {
     await tagsPage.navigateToTagsPage();
     await tagsPage.archivedButton.click();
-    await tagsPage.restoreTagIcon.click();
-    await tagsPage.restoreButton.click();
-    await expect(tagsPage.page.getByText(/Tag Restored/i)).toBeVisible();   
+    const tagName = await tagsPage.getFirstTagName();
+    await tagsPage.restoreTagByName(tagName);
+    await tagsPage.restoreButton.click(); 
+    await expect(
+        tagsPage.page.getByText(/Tag Restored/i)
+    ).toBeVisible();
 });
 });
 

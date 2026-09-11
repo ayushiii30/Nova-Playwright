@@ -1,4 +1,5 @@
 import { test, expect } from '../fixtures/test.fixture';
+import { generateUniqueProfileName } from '../utils/testData';
 
 test.describe('Chatbot Profile Management', () => {
 
@@ -11,6 +12,7 @@ test.describe('Chatbot Profile Management', () => {
     test('TC_001: User should be able to open Create Chatbot Profile', async ({
         chatbotProfilePage
     }) => {
+         
         await expect(chatbotProfilePage.profileNameInput).toBeVisible();
         await expect(chatbotProfilePage.activeButton).toBeVisible();
         await expect(chatbotProfilePage.webChannelButton).toBeVisible();
@@ -101,14 +103,17 @@ test.describe('Chatbot Profile Management', () => {
 
 
     test('TC_008: User should be able to create Chatbot Profile successfully', async ({
-        chatbotProfilePage
-    }) => {
-        await chatbotProfilePage.createChatbotProfile('Automation');
-        await expect(
-            chatbotProfilePage.page.getByText(
-                /Chatbot profile created/i
-            )
-        ).toBeVisible();
-    });
+    chatbotProfilePage
+}) => {
+    const profileName = generateUniqueProfileName();
+
+    await chatbotProfilePage.createChatbotProfile(profileName);
+
+    await expect(
+        chatbotProfilePage.page.getByText(
+            /Chatbot profile created/i
+        )
+    ).toBeVisible();
+});
 
 });
