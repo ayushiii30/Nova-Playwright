@@ -6,7 +6,7 @@ test.describe('Tags Management', () => {
         await expect(tagsPage.createTagButton).toBeVisible();
         await expect(tagsPage.searchInput).toBeVisible();
     });
-    test.skip('TC_002: User should be able to create Tag', async ({tagsPage }) => {
+    test('TC_002: User should be able to create Tag', async ({tagsPage }) => {
         await tagsPage.navigateToTagsPage();
         await tagsPage.clickCreateTag();
         await expect(tagsPage.tagNameInput).toBeVisible();
@@ -54,7 +54,7 @@ test('TC_006: User should not be able to create Tag without name', async ({
    await expect(tagsPage.modalCreateTagButton).toBeDisabled();
 });
 
-test.skip('TC_007: User should be able to create Tag without description', async ({
+test('TC_007: User should be able to create Tag without description', async ({
     tagsPage
 }) => {
     await tagsPage.navigateToTagsPage();

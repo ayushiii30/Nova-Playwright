@@ -103,7 +103,7 @@ test.describe('Chatbot Profile Management', () => {
     test('TC_008: User should be able to create Chatbot Profile successfully', async ({
         chatbotProfilePage
     }) => {
-        await chatbotProfilePage.createChatbotProfile('Automation Chatbot');
+        await chatbotProfilePage.createChatbotProfile('Automation');
         await expect(
             chatbotProfilePage.page.getByText(
                 /Chatbot profile created/i

@@ -9,10 +9,14 @@ export default defineConfig({
 
     use: {
         baseURL: process.env.BASE_URL,
-        headless: !!process.env.CI ? true : false,
+
+        // Headed locally, headless in GitHub Actions
+        headless: !process.env.CI,
+
         launchOptions: {
             slowMo: 1000,
         },
+
         screenshot: 'only-on-failure',
         video: 'retain-on-failure',
         trace: 'retain-on-failure',
