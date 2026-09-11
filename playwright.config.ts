@@ -11,7 +11,7 @@ export default defineConfig({
         baseURL: process.env.BASE_URL,
 
         // Headed locally, headless in GitHub Actions
-        headless: !process.env.CI,
+       headless: process.env.GITHUB_ACTIONS === 'true',
 
         launchOptions: {
             slowMo: 1000,
